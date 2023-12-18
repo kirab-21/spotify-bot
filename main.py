@@ -1,7 +1,6 @@
-import spotipy
 from bs4 import BeautifulSoup
 import requests
-import spotify
+import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 import os
@@ -26,8 +25,29 @@ sp = spotipy.Spotify(
         client_id={os.getenv('CLIENT_ID')},
         client_secret={os.getenv('CLIENT_SECRET')},
         show_dialog=True,
-        cache_path="token.txt",
-        username="Prabhu",
+        cache_path="token.txt"
     )
 )
 user_id = sp.current_user()["id"]
+print(user_id)
+
+# Searching Spotify for songs by title
+song_uris = []
+year = date.split("-")[0]
+month = date.split("-")[1]
+for song in song_names:
+    res = sp.search(q=f"track:{song} year:{year}", type="track")
+    print(res)
+    try:
+        uri = res["tracks"]["items"][0]["uri"]
+        song_uris.append(uri)
+    except IndexError:
+        print(f"{song} does not exist in Spotify. Skipped.")
+
+
+# Creating private playlist
+playlist = sp.user_playlist_create(user=user_id, name=f"{month}-{year} Hindi Billboard", public=False)
+print(playlist)
+
+# Adding songs into the new playlist
+sp.playlist_add_items(playlist_id=playlist["id"], items=song_uris)
