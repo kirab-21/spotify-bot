@@ -41,6 +41,7 @@ for song in song_names:
     try:
         uri = res["tracks"]["items"][0]["uri"]
         song_uris.append(uri)
+        print(f"{song} added to playlist")
     except IndexError:
         print(f"{song} does not exist in Spotify. Skipped.")
 
